@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mayura project timeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#F2F4F1; --panel:#FFFFFF; --ink:#16212B; --muted:#5E6B74; --line:#DCE1DD; --line2:#ECEFEC;
+  --band:#F7F9F7; --now:#D9A21B; --nowInk:#1A1406; --past:.38;
+  --wp1:#1F4E8C; --wp2:#0E7A6B; --wp3:#4F8A2B; --wp4:#6A4C93; --wp5:#B25E1A; --wp6:#B8336F; --wp7:#7C6A24;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F171C; --panel:#152027; --ink:#E6ECEA; --muted:#93A3A9; --line:#26343C; --line2:#1C2830;
+    --band:#121C22; --now:#F0BE3C; --nowInk:#1A1406; --past:.42;
+    --wp1:#5D8FD6; --wp2:#3CB8A4; --wp3:#86BE5A; --wp4:#A486D0; --wp5:#E39150; --wp6:#E6709F; --wp7:#C7B15E;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F171C; --panel:#152027; --ink:#E6ECEA; --muted:#93A3A9; --line:#26343C; --line2:#1C2830;
+  --band:#121C22; --now:#F0BE3C; --nowInk:#1A1406; --past:.42;
+  --wp1:#5D8FD6; --wp2:#3CB8A4; --wp3:#86BE5A; --wp4:#A486D0; --wp5:#E39150; --wp6:#E6709F; --wp7:#C7B15E;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Thai",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.5;font-variant-numeric:tabular-nums}
+.wrap{max-width:1400px;margin:0 auto;padding:28px 20px 40px}
+header h1{font-size:clamp(1.6rem,3.2vw,2.3rem);line-height:1.15;margin:0;font-weight:700;letter-spacing:-.01em}
+header .th{font-size:1.05rem;color:var(--muted);margin:4px 0 0;font-weight:500}
+.status{margin:22px 0 18px;display:flex;flex-wrap:wrap;gap:10px 28px;align-items:baseline}
+.clock{font-size:1.25rem;font-weight:600}
+.clock small{font-weight:500;color:var(--muted);font-size:.95rem;margin-left:8px}
+.next{color:var(--muted);max-width:70ch}
+.next b{color:var(--ink);font-weight:600}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-bottom:12px}
+.legend{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:3px 11px 3px 8px;font:inherit;font-size:.82rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.chip i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.chip[aria-pressed="false"]{opacity:.45}
+.chip:focus-visible,.btn:focus-visible,.bar:focus-visible{outline:2px solid var(--now);outline-offset:2px}
+.spacer{flex:1}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:5px 12px;font:inherit;font-size:.85rem;cursor:pointer}
+.btn.primary{background:var(--now);color:var(--nowInk);border-color:transparent;font-weight:600}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;border-right:1px solid var(--line);background:var(--panel);color:var(--muted);font:inherit;font-size:.85rem;padding:5px 11px;cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+.chart{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.scroller{overflow-x:auto;overflow-y:hidden;position:relative;-webkit-overflow-scrolling:touch}
+.grid{position:relative}
+.row{display:flex;min-height:38px;border-bottom:1px solid var(--line2)}
+.row:last-child{border-bottom:0}
+.lab{position:sticky;left:0;z-index:4;background:var(--panel);width:var(--labW);flex:0 0 var(--labW);padding:7px 12px;border-right:1px solid var(--line);display:flex;flex-direction:column;justify-content:center;font-size:.86rem;line-height:1.3}
+.lab .wp{font-size:.72rem;font-weight:600}
+.lab .own{color:var(--muted);font-size:.74rem}
+.track{position:relative;flex:0 0 auto}
+.head .lab{font-weight:600;color:var(--muted);font-size:.8rem}
+.head{position:relative;z-index:5}
+.months{display:flex;height:26px;border-bottom:1px solid var(--line2)}
+.months div,.weeks div{position:absolute;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:.78rem;color:var(--muted);border-left:1px solid var(--line);white-space:nowrap;overflow:hidden}
+.months div{font-weight:600;color:var(--ink)}
+.weeks div{font-size:.68rem;border-left-color:var(--line2)}
+.weeks div.cur{color:var(--nowInk);background:var(--now);font-weight:700}
+.sem{font-size:.72rem}
+.bg{position:absolute;top:0;bottom:0;pointer-events:none;z-index:0}
+.bg span{position:absolute;top:0;bottom:0}
+.bg .mband{background:var(--band)}
+.bg .wl{border-left:1px dashed var(--line2)}
+.bg .ml{border-left:1px solid var(--line)}
+.bar{position:absolute;top:8px;bottom:8px;border-radius:6px;cursor:pointer;z-index:2;background:color-mix(in srgb,var(--c) 22%,transparent);border:1.5px solid var(--c);overflow:hidden;padding:0}
+.bar .fill{position:absolute;inset:0 auto 0 0;background:var(--c)}
+.bar.past{opacity:var(--past)}
+.bar.live{box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 25%,transparent)}
+.row.dim .bar,.row.dim .lab{opacity:.18}
+.ms{position:absolute;top:50%;transform:translate(-50%,-50%);z-index:2;font-size:.72rem;font-weight:700;background:var(--ink);color:var(--bg);border-radius:5px;padding:1px 6px;cursor:default;white-space:nowrap}
+.ms.done{opacity:.45}
+.kd{position:absolute;top:50%;width:11px;height:11px;transform:translate(-50%,-50%) rotate(45deg);background:var(--ink);z-index:2;cursor:pointer;border:0;padding:0}
+.kd.done{opacity:.4}
+.nowline{position:absolute;top:0;bottom:0;width:0;z-index:3;pointer-events:none}
+.nowline::before{content:"";position:absolute;top:0;bottom:0;left:-1px;width:2px;background:var(--now);box-shadow:0 0 10px color-mix(in srgb,var(--now) 60%,transparent)}
+.nowtag{position:absolute;top:54px;left:0;transform:translateX(-50%);background:var(--now);color:var(--nowInk);font-size:.7rem;font-weight:700;padding:2px 7px;border-radius:999px;white-space:nowrap}
+.nowtag::after{content:"";position:absolute;left:50%;top:-4px;width:7px;height:7px;background:var(--now);transform:translateX(-50%) rotate(45deg)}
+.pulse{position:absolute;left:-5px;width:10px;height:10px;border-radius:50%;background:var(--now);bottom:6px}
+@media (prefers-reduced-motion:no-preference){.pulse{animation:p 2s ease-out infinite}}
+@keyframes p{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--now) 70%,transparent)}100%{box-shadow:0 0 0 12px transparent}}
+.tip{position:fixed;z-index:20;background:var(--ink);color:var(--bg);border-radius:10px;padding:10px 12px;font-size:.82rem;max-width:280px;pointer-events:none;opacity:0;transition:opacity .12s}
+.tip.on{opacity:1}
+.tip b{display:block;font-size:.9rem;margin-bottom:2px}
+.tip .m{opacity:.75}
+.foot{color:var(--muted);font-size:.8rem;margin-top:14px;max-width:80ch}
+@media (max-width:640px){
+  .wrap{padding:18px 12px 28px}
+  .lab{padding:6px 8px;font-size:.78rem}
+  .lab .own{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Mayura: Thai imagined-speech EEG decoding</h1>
+    <p class="th">มยุรา: ระบบถอดรหัสคลื่นสมองของการนึกคิดคำพูดภาษาไทย, senior project timeline 2569</p>
+  </header>
+
+  <div class="status" aria-live="polite">
+    <div class="clock" id="clock"></div>
+    <div class="next" id="next"></div>
+  </div>
+
+  <div class="toolbar">
+    <div class="legend" id="legend"></div>
+    <div class="spacer"></div>
+    <div class="seg" id="zoom" role="group" aria-label="Zoom">
+      <button data-z="fit" aria-pressed="true">Fit</button>
+      <button data-z="6" aria-pressed="false">Wide</button>
+      <button data-z="10" aria-pressed="false">Zoom</button>
+    </div>
+    <button class="btn primary" id="today">Jump to today</button>
+  </div>
+
+  <div class="chart"><div class="scroller" id="scroller"><div class="grid" id="grid"></div></div></div>
+
+  <p class="foot">Weeks follow the report's layout: week 1 is days 1 to 7, week 2 days 8 to 14, week 3 days 15 to 21 and week 4 the rest of the month. The gold line is the current time in your browser and moves on its own. Diamonds mark exact dates from the proposal text. Tap or hover a bar for details.</p>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+(function(){
+const WP={
+  1:"Foundation & Ethics",2:"Experiment & Data Acquisition",3:"Pipeline & Validity Controls",
+  4:"Decoding Models",5:"Evaluation",6:"Offline Demo Prototype",7:"Reporting & Defense"
+};
+// [wp, task, owner, start "MonW", end "MonW"]
+const TASKS=[
+  [1,"Finalize topic & scope","All","Aug1","Aug2"],
+  [1,"Literature survey (imagined speech, EEG validity)","All","Aug1","Sep3"],
+  [1,"CITI research-ethics certification","All","Sep2","Sep4"],
+  [1,"Prepare & submit IRB documentation","All","Sep3","Oct4"],
+  [1,"Re-write & finalize proposal report","All","Sep3","Oct1"],
+  [1,"Project self-assessment (Non-HDS)","All","Sep3","Oct1"],
+  [1,"Proposal presentation","All","Sep4","Oct2"],
+  [2,"Design paradigm, vocabulary & stimuli","All","Sep4","Oct3"],
+  [2,"Configure & test BioSemi ActiveTwo","Kanyavan, Jiraphan","Oct2","Nov1"],
+  [3,"Validate pipeline on public dataset","Veerisara","Oct1","Nov1"],
+  [2,"Pilot data collection (after IRB)","All","Oct3","Nov2"],
+  [2,"Full EEG data collection (S1; S2/S3)","All","Nov2","Dec3"],
+  [3,"Preprocessing & data-cleaning pipeline","Kanyavan, Jiraphan","Nov2","Dec3"],
+  [4,"Baseline models (classical + EEGNet)","All","Oct4","Nov4"],
+  [4,"Subject-specific decoding on Thai data","All","Nov3","Dec3"],
+  [3,"Validity-control analyses (EMG/EOG/cue)","Veerisara, Jiraphan","Nov4","Dec4"],
+  [7,"Progress report & presentation","All","Dec1","Dec3"],
+  [4,"Model refinement & nested tuning","All","Jan1","Feb3"],
+  [4,"Subject-independent & H1 experiments","All","Jan2","Feb4"],
+  [6,"Connect model to offline demo UI","Kanyavan, Jiraphan","Feb1","Mar2"],
+  [6,"Offline replay demo prototype","All","Feb3","Mar3"],
+  [5,"Final evaluation (R1 to R4, controls)","All","Mar1","Mar4"],
+  [5,"Statistics & H1 hypothesis test","All","Mar2","Mar4"],
+  [6,"System testing & iteration","All","Mar3","Apr2"],
+  [7,"Compile final senior project report","All","Mar4","Apr4"],
+  [7,"Prepare final presentation","All","Apr3","May2"],
+  [7,"Final showcase & defense","All","May2","May4"]
+];
+const MILESTONES=[
+  ["M1","Aug4","Topic and scope finalised"],
+  ["M2","Oct2","CITI, proposal submitted and presented, IRB submitted"],
+  ["M3","Dec3","Progress report and presentation, pipeline validated, data collected"],
+  ["M4","Feb4","Refined decoders, subject-independent and H1 experiments, demo prototype"],
+  ["M5","Mar4","Final evaluation completed, final report drafted"],
+  ["M6","May3","Final showcase and defense"]
+];
+const KEYDATES=[
+  ["2026-08-28","2026-08-28","Project idea submitted"],
+  ["2026-09-25","2026-09-25","CITI certification"],
+  ["2026-10-02","2026-10-02","Proposal and self-assessment submitted"],
+  ["2026-10-08","2026-10-09","Proposal presentation"],
+  ["2026-12-04","2026-12-04","Progress report due"],
+  ["2026-12-14","2026-12-15","Progress presentation"]
+];
+
+const MON={Aug:[2026,7],Sep:[2026,8],Oct:[2026,9],Nov:[2026,10],Dec:[2026,11],Jan:[2027,0],Feb:[2027,1],Mar:[2027,2],Apr:[2027,3],May:[2027,4]};
+const START=new Date(2026,7,1), END=new Date(2027,5,1); // exclusive
+const DAY=864e5;
+const dim=(y,m)=>new Date(y,m+1,0).getDate();
+function wkRange(code){
+  const [y,m]=MON[code.slice(0,3)], w=+code[3];
+  const s=new Date(y,m,(w-1)*7+1);
+  const e=w===4?new Date(y,m+1,1):new Date(y,m,w*7+1);
+  return [s,e];
+}
+const dOff=d=>(d-START)/DAY;
+const parseD=s=>{const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)};
+const fmt=d=>d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+const TOTAL=dOff(END);
+
+const grid=document.getElementById("grid"), scroller=document.getElementById("scroller");
+const tip=document.getElementById("tip");
+let ppd=4, zoomMode="fit", hidden=new Set();
+
+function labW(){return window.innerWidth<640?150:290}
+
+// legend
+const lg=document.getElementById("legend");
+Object.entries(WP).forEach(([k,n])=>{
+  const b=document.createElement("button");b.className="chip";b.setAttribute("aria-pressed","true");
+  b.innerHTML=`<i style="background:var(--wp${k})"></i>WP${k} ${n}`;
+  b.onclick=()=>{hidden.has(k)?hidden.delete(k):hidden.add(k);b.setAttribute("aria-pressed",!hidden.has(k));applyDim()};
+  lg.appendChild(b);
+});
+function applyDim(){grid.querySelectorAll(".row[data-wp]").forEach(r=>r.classList.toggle("dim",hidden.has(r.dataset.wp)))}
+
+function el(t,c,h){const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e}
+
+function build(){
+  const LW=labW();
+  if(zoomMode==="fit") ppd=Math.max(2.6,(scroller.clientWidth-LW-2)/TOTAL); else ppd=+zoomMode;
+  const W=Math.round(TOTAL*ppd);
+  grid.style.setProperty("--labW",LW+"px");
+  grid.style.width=(LW+W)+"px";
+  grid.innerHTML="";
+  const now=new Date();
+
+  // background layer
+  const bg=el("div","bg");bg.style.left=LW+"px";bg.style.width=W+"px";
+  let i=0;
+  for(const [k,[y,m]] of Object.entries(MON)){
+    const s=new Date(y,m,1),e=new Date(y,m+1,1);
+    if(i++%2===1){const b=el("span","mband");b.style.left=dOff(s)*ppd+"px";b.style.width=(dOff(e)-dOff(s))*ppd+"px";bg.appendChild(b)}
+    const ml=el("span","ml");ml.style.left=dOff(s)*ppd+"px";bg.appendChild(ml);
+    for(let w=2;w<=4;w++){const wl=el("span","wl");wl.style.left=dOff(new Date(y,m,(w-1)*7+1))*ppd+"px";bg.appendChild(wl)}
+  }
+  grid.appendChild(bg);
+
+  // header
+  const h1=el("div","row head");const l1=el("div","lab sem","Semester 1 / Semester 2");
+  const mt=el("div","track months");mt.style.width=W+"px";
+  for(const [k,[y,m]] of Object.entries(MON)){
+    const s=new Date(y,m,1),e=new Date(y,m+1,1),d=el("div",null,`${k} '${String(y).slice(2)}`);
+    d.style.left=dOff(s)*ppd+"px";d.style.width=(dOff(e)-dOff(s))*ppd+"px";mt.appendChild(d)}
+  h1.append(l1,mt);grid.appendChild(h1);
+  const h2=el("div","row head");h2.style.minHeight="22px";const l2=el("div","lab","Task");
+  const wt=el("div","track weeks");wt.style.width=W+"px";wt.style.height="22px";
+  for(const k of Object.keys(MON))for(let w=1;w<=4;w++){
+    const [s,e]=wkRange(k+w),d=el("div",null,ppd*7>14?String(w):"");
+    d.style.left=dOff(s)*ppd+"px";d.style.width=(dOff(e)-dOff(s))*ppd+"px";
+    if(now>=s&&now<e)d.classList.add("cur");wt.appendChild(d)}
+  h2.append(l2,wt);grid.appendChild(h2);
+
+  // tasks
+  TASKS.forEach(([wp,name,own,a,b])=>{
+    const [s]=wkRange(a),[,e]=wkRange(b);
+    const r=el("div","row");r.dataset.wp=String(wp);
+    r.appendChild(el("div","lab",`<span class="wp" style="color:var(--wp${wp})">WP${wp}</span>${name}<span class="own">${own}</span>`));
+    const t=el("div","track");t.style.width=W+"px";
+    const bar=el("button","bar");bar.style.setProperty("--c",`var(--wp${wp})`);
+    bar.style.left=dOff(s)*ppd+"px";bar.style.width=Math.max(4,(dOff(e)-dOff(s))*ppd)+"px";
+    const fill=el("span","fill");bar.appendChild(fill);
+    let st,pct=0;
+    if(now>=e){st="Done";bar.classList.add("past");pct=100}
+    else if(now<s){st="Upcoming"}
+    else{st="In progress";bar.classList.add("live");pct=Math.round((now-s)/(e-s)*100)}
+    fill.style.width=pct+"%";
+    const last=new Date(e-DAY);
+    bar.setAttribute("aria-label",`${name}, ${fmt(s)} to ${fmt(last)}, ${st}`);
+    bar.dataset.tip=`<b>${name}</b>WP${wp} ${WP[wp]}<br>${own}<br><span class="m">${fmt(s)} to ${fmt(last)}<br>${st}${st==="In progress"?`, ${pct}% of the window elapsed`:""}</span>`;
+    t.appendChild(bar);r.appendChild(t);grid.appendChild(r);
+  });
+
+  // key dates row
+  const kr=el("div","row");kr.appendChild(el("div","lab","<span class='wp'>Exact dates</span>From the proposal text"));
+  const kt=el("div","track");kt.style.width=W+"px";
+  KEYDATES.forEach(([a,b,label])=>{
+    const s=parseD(a),e=new Date(parseD(b).getTime()+DAY),k=el("button","kd");
+    k.style.left=((dOff(s)+dOff(e))/2)*ppd+"px";
+    if(now>=e)k.classList.add("done");
+    k.setAttribute("aria-label",label);
+    k.dataset.tip=`<b>${label}</b>${a===b?fmt(s):fmt(s)+" to "+fmt(parseD(b))}`;
+    kt.appendChild(k)});
+  kr.appendChild(kt);grid.appendChild(kr);
+
+  // milestones row
+  const mr=el("div","row");mr.appendChild(el("div","lab","<span class='wp'>Milestones</span>M1 to M6"));
+  const mtk=el("div","track");mtk.style.width=W+"px";
+  MILESTONES.forEach(([id,wk,desc])=>{
+    const [s,e]=wkRange(wk),m=el("div","ms",id);
+    m.style.left=((dOff(s)+dOff(e))/2)*ppd+"px";if(now>=e)m.classList.add("done");
+    m.dataset.tip=`<b>${id}</b>${desc}<br><span class="m">${wk.slice(0,3)} week ${wk[3]}</span>`;mtk.appendChild(m)});
+  mr.appendChild(mtk);grid.appendChild(mr);
+
+  // now line
+  const nl=el("div","nowline");nl.id="nowline";
+  nl.appendChild(el("span","nowtag",""));nl.appendChild(el("span","pulse"));
+  grid.appendChild(nl);
+  placeNow();
+}
+
+function placeNow(){
+  const nl=document.getElementById("nowline");if(!nl)return;
+  const now=new Date(),off=dOff(now);
+  if(off<0||off>TOTAL){nl.style.display="none";return}
+  nl.style.display="";
+  nl.style.left=(labW()+off*ppd)+"px";
+  nl.querySelector(".nowtag").textContent="Now "+now.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+}
+
+function status(){
+  const now=new Date();
+  const wk=Math.min(4,Math.floor((now.getDate()-1)/7)+1);
+  document.getElementById("clock").innerHTML=
+    now.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})+
+    `<small>${now.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit"})}, week ${wk} of ${now.toLocaleDateString("en-GB",{month:"long"})}</small>`;
+  const events=[
+    ...KEYDATES.map(([a,b,l])=>({d:parseD(a),end:new Date(parseD(b).getTime()+DAY),l})),
+    ...MILESTONES.map(([id,wk,desc])=>{const [s,e]=wkRange(wk);return{d:s,end:e,l:`${id}: ${desc}`}})
+  ].sort((x,y)=>x.d-y.d);
+  const nx=events.find(e=>e.end>now);
+  const live=TASKS.filter(([, , ,a,b])=>{const [s]=wkRange(a),[,e]=wkRange(b);return now>=s&&now<e}).length;
+  let msg=`${live} task${live===1?"":"s"} in progress. `;
+  if(nx){
+    const days=Math.ceil((new Date(nx.d.getFullYear(),nx.d.getMonth(),nx.d.getDate())-new Date(now.getFullYear(),now.getMonth(),now.getDate()))/DAY);
+    msg+=`Next up: <b>${nx.l}</b> ${days<=0?"is happening now":days===1?"tomorrow":`in ${days} days`}.`;
+  } else msg+="All milestones are behind you.";
+  document.getElementById("next").innerHTML=msg;
+}
+
+function jumpToday(smooth){
+  const off=dOff(new Date());
+  const x=Math.max(0,off*ppd-(scroller.clientWidth-labW())/2);
+  scroller.scrollTo({left:x,behavior:smooth?"smooth":"auto"});
+}
+
+// tooltip
+function showTip(t,x,y){tip.innerHTML=t;tip.classList.add("on");
+  const r=tip.getBoundingClientRect();let L=x+14,T=y+14;
+  if(L+r.width>innerWidth-8)L=x-r.width-14;if(T+r.height>innerHeight-8)T=y-r.height-14;
+  tip.style.left=Math.max(8,L)+"px";tip.style.top=Math.max(8,T)+"px"}
+grid.addEventListener("mousemove",e=>{const t=e.target.closest("[data-tip]");t?showTip(t.dataset.tip,e.clientX,e.clientY):tip.classList.remove("on")});
+grid.addEventListener("mouseleave",()=>tip.classList.remove("on"));
+grid.addEventListener("click",e=>{const t=e.target.closest("[data-tip]");if(t){const r=t.getBoundingClientRect();showTip(t.dataset.tip,r.left+r.width/2,r.bottom)}});
+grid.addEventListener("focusin",e=>{const t=e.target.closest("[data-tip]");if(t){const r=t.getBoundingClientRect();showTip(t.dataset.tip,r.left,r.bottom)}});
+grid.addEventListener("focusout",()=>tip.classList.remove("on"));
+scroller.addEventListener("scroll",()=>tip.classList.remove("on"));
+
+document.querySelectorAll("#zoom button").forEach(b=>b.onclick=()=>{
+  zoomMode=b.dataset.z;document.querySelectorAll("#zoom button").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  build();applyDim();jumpToday(false)});
+document.getElementById("today").onclick=()=>jumpToday(true);
+let rt;addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>{build();applyDim()},150)});
+
+build();status();jumpToday(false);
+let lastDay=new Date().getDate();
+setInterval(()=>{status();placeNow();
+  const d=new Date().getDate();if(d!==lastDay){lastDay=d;build();applyDim()}},1000);
+})();
+</script>
+</body>
+</html>
